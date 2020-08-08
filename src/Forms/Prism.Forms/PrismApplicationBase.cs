@@ -139,6 +139,21 @@ namespace Prism
             return Container.Resolve<INavigationService>();
         }
 
+        public INavigationService UseShellNavigation<TShell>()
+            where TShell : Shell => UseShellNavigation<TShell, ShellPrismNavigationService>();
+
+        protected INavigationService UseShellNavigation<TShell, TNavigationService>()
+            where TShell : Shell
+            where TNavigationService : class, INavigationService
+        {
+            _containerExtension.RegisterSingleton<INavigationService, TNavigationService>();
+            var shell = Container.Resolve<TShell>();
+            var navigationService = Container.Resolve<INavigationService>();
+            // shell.SetNavigationService(navigationService);
+            MainPage = shell;
+            return navigationService;
+        }
+
         /// <summary>
         /// Run the bootstrapper process.
         /// </summary>
